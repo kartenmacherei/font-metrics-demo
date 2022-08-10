@@ -1,0 +1,162 @@
+.container {
+  padding: 100px;
+  line-height: var(--lineHeight);
+
+  --metric-line-size: 1px;
+}
+
+.wrapper {
+  position: relative;
+  width: max-content;
+}
+
+.wrapper * {
+  box-sizing: content-box;
+}
+
+.text-box {
+  position: relative;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: subpixel-antialiased;
+  right: 0;
+  width: max-content;
+  left: 0px;
+  top: 0px;
+  font-style: normal;
+  font-weight: normal;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  font-family: var(--fontFamily);
+  word-break: break-word;
+}
+
+.typo {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  border: var(--metric-line-size) solid blue;
+  border-width: var(--metric-line-size) 0;
+}
+.typo::before {
+  font-size: 0.8rem;
+  content: "Typo Ascender";
+  position: absolute;
+  top: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(-50%);
+  color: blue;
+  font-family: sans-serif;
+}
+.typo::after {
+  font-size: 0.8rem;
+  content: "Typo Descender";
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(50%);
+  color: blue;
+  font-family: sans-serif;
+}
+.typo:hover {
+  opacity: 1;
+}
+.typo:hover.typo::before {
+  opacity: 1;
+}
+
+.hhead {
+  font-size: var(--fontSize);
+  position: absolute;
+  left: 0;
+  top: calc(var(--fontAscentDelta) * -1em);
+  bottom: calc(var(--fontDescentDelta) * -1em);
+  right: 0;
+  border: var(--metric-line-size) solid fuchsia;
+  border-width: var(--metric-line-size) 0;
+}
+
+.hhead::before {
+  content: "HHead Ascender";
+  font-size: 0.8rem;
+  position: absolute;
+  top: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(-50%);
+  color: fuchsia;
+  font-family: sans-serif;
+}
+.hhead::after {
+  content: "HHead Descender";
+  font-size: 0.8rem;
+  position: absolute;
+  bottom: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(50%);
+  color: fuchsia;
+  font-family: sans-serif;
+}
+
+.cap-height {
+  font-size: var(--fontSize);
+  position: absolute;
+  left: 0;
+  height: calc(var(--fontCapHeight) * 1em);
+  bottom: 0;
+  right: 0;
+  border: var(--metric-line-size) solid lime;
+  border-width: var(--metric-line-size) 0 0;
+}
+
+.cap-height::before {
+  content: "Cap Height";
+  font-size: 0.8rem;
+  position: absolute;
+  top: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(-50%);
+  color: lime;
+  font-family: sans-serif;
+}
+
+.x-height {
+  font-size: var(--fontSize);
+  position: absolute;
+  left: 0;
+  height: calc(var(--fontXHeight) * 1em);
+  bottom: 0;
+  right: 0;
+  border: var(--metric-line-size) solid orange;
+  border-width: var(--metric-line-size) 0 0;
+}
+
+.x-height::before {
+  content: "X Height";
+  font-size: 0.8rem;
+  position: absolute;
+  top: 0;
+  right: -10px;
+  transform: translateX(100%) translateY(-50%);
+  color: orange;
+  font-family: sans-serif;
+}
+
+.text {
+  font-size: var(--fontSize);
+  text-align: center;
+  line-height: var(--lineHeight);
+}
+
+.with-fix::before {
+  content: "";
+  margin-bottom: calc(var(--fontAscentDelta) * -1em);
+  display: block;
+}
+
+.with-fix::after {
+  content: "";
+  margin-top: calc(var(--fontDescentDelta) * -1em);
+  display: block;
+}
