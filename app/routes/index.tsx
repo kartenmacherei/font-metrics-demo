@@ -4,7 +4,7 @@ import {
   unstable_createMemoryUploadHandler,
   unstable_parseMultipartFormData,
 } from "@remix-run/cloudflare";
-import { Form, useActionData, useSubmit } from "@remix-run/react";
+import { Form, useActionData, useFetcher } from "@remix-run/react";
 import { useEffect } from "react";
 import opentype, { Font } from "opentype.js";
 
@@ -47,7 +47,7 @@ export const action: ActionFunction = async ({ request }) => {
   if (!file) {
     throw new Error("No file uploaded");
   }
-  
+
   const fileUploadName = (file as File).name as string;
   const fileUploadNameDot = fileUploadName.lastIndexOf(".");
 
@@ -55,6 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
   const fontExt = fileUploadName.substring(fileUploadNameDot + 1);
 
   const fileArrayBuffer = await (file as File).arrayBuffer();
+
   const font = opentype.parse(fileArrayBuffer);
   const fontData = {
     fileName: fileName,
@@ -81,12 +82,13 @@ type Metadata = {
 };
 
 type FontData = {
-  fileName: string,
-  ext: string,
-  metadata:Metadata
-}
+  fileName: string;
+  ext: string;
+  metadata: Metadata;
+  dataUri: string;
+};
 
-const bootstrapUI = async (fontData: FontData) => {
+const bootstrapUI = async (fontData: FontData, fontFile: File) => {
   var osName: "other" | "windows" = "other";
   if (navigator.appVersion.indexOf("Win") != -1) {
     osName = "windows";
@@ -96,10 +98,7 @@ const bootstrapUI = async (fontData: FontData) => {
   const lineHeight = 1.2;
 
   const fontMetadata = fontData.metadata;
-  const font = new FontFace(
-    fontData.fileName,
-    `url(https://fonts.stage.celebrate.company/assets/fonts/${fontData.fileName}.ttf)`
-  );
+  const font = new FontFace(fontData.fileName, await fontFile.arrayBuffer());
   if (!fontMetadata) {
     throw new Error("no metadata found!");
   }
@@ -131,36 +130,48 @@ const bootstrapUI = async (fontData: FontData) => {
 };
 
 export default function Index() {
-  const formData = useActionData();
-  console.log(formData);
+  const fileUploadFetcher = useFetcher();
   useEffect(() => {
-    bootstrapUI(formData);
-  }, [formData]);
+    if (!fileUploadFetcher.data) {
+      return;
+    }
+    if (!fileUploadFetcher.submission) {
+      // not submitted yet
+      return;
+    }
+    const fontFile = fileUploadFetcher.submission.formData.get("font") as File;
+    if (!fontFile) {
+      throw new Error("No file uploaded");
+    }
+    bootstrapUI(fileUploadFetcher.data, fontFile);
+  }, [fileUploadFetcher.data, fileUploadFetcher.submission]);
   return (
-    <div>
-      <Form method="post" encType="multipart/form-data">
+    <div className="container">
+      <fileUploadFetcher.Form method="post" encType="multipart/form-data">
         <input type="file" name="font" />
         <button type="submit">Upload</button>
-      </Form>
-      <div className="container">
-        <div className="wrapper">
-          <div className="typo"></div>
-          <div className="cap-height"></div>
-          <div className="x-height"></div>
-          <div className="hhead"></div>
-          <div className="text-box">
-            <div
-              className="text with-fix"
-              contentEditable
-              role="textbox"
-              aria-multiline="true"
-              spellCheck="false"
-            >
-              Mein FoToxbuch 2020
+      </fileUploadFetcher.Form>
+      {fileUploadFetcher.data ? (
+        <div className="text-container">
+          <div className="wrapper">
+            <div className="typo"></div>
+            <div className="cap-height"></div>
+            <div className="x-height"></div>
+            <div className="hhead"></div>
+            <div className="text-box">
+              <div
+                className="text with-fix"
+                contentEditable
+                role="textbox"
+                aria-multiline="true"
+                spellCheck="false"
+              >
+                Mein FoToxbuch 2020
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
     </div>
   );
 }

@@ -1,5 +1,9 @@
 .container {
-  padding: 100px;
+  padding: 32px;
+}
+
+.text-container {
+  padding: 100px 0;
   line-height: var(--lineHeight);
 
   --metric-line-size: 1px;
